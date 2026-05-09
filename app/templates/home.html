@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OrzuX | Kengaytirilgan Imkoniyatlar Markazi</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Light tema (default) */
+        :root {
+            --bright-blue: #007aff;
+            --light-blue: #e3f2fd;
+            --glass-white: rgba(255, 255, 255, 0.85);
+            --text-dark: #1d1d1f;
+            --bg-gradient-start: #e0f7fa;
+            --bg-gradient-end: #ffffff;
+            --card-bg: white;
+            --card-border: #f0f0f0;
+            --tag-bg: var(--light-blue);
+            --tag-text: var(--bright-blue);
+        }
+
+        /* Dark tema */
+        body.dark {
+            --bright-blue: #0a84ff;
+            --light-blue: #1c2c3c;
+            --glass-white: rgba(30, 30, 40, 0.85);
+            --text-dark: #f5f5f7;
+            --bg-gradient-start: #121212;
+            --bg-gradient-end: #1e1e2a;
+            --card-bg: #2c2c38;
+            --card-border: #3a3a44;
+            --tag-bg: #2a3a4a;
+            --tag-text: #66b0ff;
+        }
+
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+
+        body {
+            background: #f0f4f8;
+            color: var(--text-dark);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        body.dark {
+            background: #121212;
+        }
+
+        .master-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: linear-gradient(120deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+        }
+        video {
+            width: 100%; height: 100%; object-fit: cover;
+            opacity: 0.3; filter: blur(50px);
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            grid-template-rows: 70px 1fr;
+            height: 100vh;
+            gap: 10px;
+            padding: 10px;
+        }
+
+        header {
+            grid-column: 1 / -1;
+            background: var(--glass-white);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--bright-blue); letter-spacing: -1px; }
+
+        .header-tools { display: flex; gap: 30px; font-size: 0.85rem; font-weight: 600; align-items: center; }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            cursor: pointer;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        aside {
+            background: var(--glass-white);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            overflow-y: auto;
+        }
+
+        .filter-section h4 {
+            font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;
+            color: #8e8e93; margin-bottom: 15px;
+        }
+        body.dark .filter-section h4 { color: #aaa; }
+
+        .filter-btn {
+            display: flex; align-items: center; gap: 10px;
+            width: 100%; padding: 10px 12px; margin-bottom: 8px;
+            border: none; background: transparent; border-radius: 12px;
+            cursor: pointer; font-weight: 500; transition: 0.3s;
+            color: var(--text-dark);
+            font-size: 0.85rem;
+        }
+
+        .filter-btn:hover { background: rgba(0, 122, 255, 0.1); }
+        .filter-btn.active { background: var(--bright-blue); color: white; }
+        body.dark .filter-btn.active { background: var(--bright-blue); color: #fff; }
+
+        main {
+            background: var(--glass-white);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 30px;
+            overflow-y: auto;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            transition: 0.3s;
+            border: 1px solid var(--card-border);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 230px;
+        }
+
+        .card:hover { transform: translateY(-5px); box-shadow: 0 20px 35px rgba(0,0,0,0.2); }
+
+        .card-tag {
+            font-size: 0.65rem; font-weight: 700; color: var(--tag-text);
+            background: var(--tag-bg); padding: 5px 10px; border-radius: 8px;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+
+        .card h3 { margin: 5px 0 10px; font-size: 1.1rem; color: var(--text-dark); }
+        .card p { font-size: 0.8rem; color: #636e72; line-height: 1.4; margin-bottom: 15px; }
+        body.dark .card p { color: #b0b0b8; }
+
+        .explore-btn {
+            color: var(--bright-blue); text-decoration: none;
+            font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; gap: 6px;
+            margin-top: 8px;
+        }
+
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #34c759; }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-thumb { background: #d1d1d6; border-radius: 10px; }
+        body.dark ::-webkit-scrollbar-thumb { background: #3a3a44; }
+
+        @media (max-width: 700px) {
+            .dashboard { grid-template-columns: 1fr; grid-template-rows: auto auto 1fr; }
+            aside { display: flex; flex-direction: row; flex-wrap: wrap; gap: 15px; }
+            .filter-section { min-width: 140px; }
+        }
+        .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--bright-blue, #007aff);
+        color: white;
+        text-decoration: none;
+        padding: 6px 14px;
+        border-radius: 30px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        margin-left: 8px;
+        border: none;
+        cursor: pointer;
+    }
+    .back-btn:hover {
+        background: #005bb5;
+        transform: scale(1.02);
+        box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+    }
+    body.dark .back-btn {
+        background: var(--bright-blue, #0a84ff);
+    }
+    body.dark .back-btn:hover {
+        background: #0051a5;
+    }
+    </style>
+</head>
+<body>
+
+<div class="master-bg">
+    <video autoplay muted loop playsinline>
+        <source src="video.mp4" type="video/mp4">
+    </video>
+</div>
+
+<div class="dashboard">
+    <header>
+        <div class="logo">Orzu<span style="color: var(--text-dark);">X</span></div>
+        <div class="header-tools">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <a href="{% url 'pre_home' %}" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
+                <div class="status-dot"></div> <span id="mode-text">Live Opportunities</span>
+            </div>
+            <div id="clock">00:00:00</div>
+            <button class="theme-toggle" id="themeToggleBtn" aria-label="Toggle theme">
+                <i class="fas fa-moon"></i> <span id="themeLabel">Kun</span>
+            </button>
+        </div>
+    </header>
+
+    <aside>
+        <div class="filter-section">
+            <h4><i class="fas fa-graduation-cap"></i> Sohalar</h4>
+            <button class="filter-btn active" onclick="filterBy('all')"><i class="fas fa-th-large"></i> Barchasi</button>
+            <button class="filter-btn" onclick="filterBy('cs')"><i class="fas fa-code"></i> Kompyuter fanlari</button>
+            <button class="filter-btn" onclick="filterBy('econ')"><i class="fas fa-chart-line"></i> Iqtisodiyot</button>
+            <button class="filter-btn" onclick="filterBy('eng')"><i class="fas fa-microchip"></i> Muhandislik</button>
+        </div>
+        <div class="filter-section">
+            <h4><i class="fas fa-bars"></i> Turkum</h4>
+            <button class="filter-btn" onclick="filterBy('intern')"><i class="fas fa-laptop-code"></i> Stajirovka</button>
+            <button class="filter-btn" onclick="filterBy('vol')"><i class="fas fa-hand-holding-heart"></i> Volontyorlik</button>
+            <button class="filter-btn" onclick="filterBy('mun')"><i class="fas fa-globe-americas"></i> MUN</button>
+            <button class="filter-btn" onclick="filterBy('hackathon')"><i class="fas fa-rocket"></i> Hackathon</button>
+            <button class="filter-btn" onclick="filterBy('fellowship')"><i class="fas fa-users"></i> Fellowship</button>
+            <button class="filter-btn" onclick="filterBy('grant')"><i class="fas fa-coins"></i> Grant & Scholarship</button>
+            <button class="filter-btn" onclick="filterBy('local')"><i class="fas fa-map-marker-alt"></i> Mahalliy (O'zbekiston)</button>
+        </div>
+    </aside>
+
+    <main>
+        <div class="grid-container" id="opportunity-grid"></div>
+    </main>
+</div>
+
+<script>
+    // --------------------------- MA'LUMOTLAR BAZASI (65+ imkoniyat) ---------------------------
+    const opportunities = [
+        // CS & IT stajirovkalari
+        { title: "Google STEP Intern", cat: "cs intern", desc: "Bakalavr talabalari uchun Software Engineering pre-stajirovkasi.", link: "https://buildyourfuture.withgoogle.com/" },
+        { title: "Microsoft Explore Intern", cat: "cs intern", desc: "Dasturlash va mahsulot menejmenti bo‘yicha 12 haftalik amaliyot.", link: "https://careers.microsoft.com/" },
+        { title: "Meta University", cat: "cs intern", desc: "Kam vakillikdagi guruhlar uchun dasturiy ta'minot va tadqiqot stajirovkasi.", link: "https://www.metacareers.com/" },
+        { title: "Amazon Future Engineer", cat: "cs intern", desc: "Bulutli texnologiyalar va AI/ML sohasida onlayn+offline amaliyot.", link: "https://www.amazon.jobs/" },
+        { title: "Apple AI/ML Intern", cat: "cs intern", desc: "Machine Learning va Computer Vision laboratoriyasida ishlash.", link: "https://www.apple.com/careers/" },
+        { title: "OpenAI Residency", cat: "cs intern", desc: "AGI tadqiqotlari bo‘yicha immersiv dastur.", link: "https://openai.com/careers/" },
+        { title: "DeepMind Scholars", cat: "cs intern", desc: "London yoki Parijda 6 oylik ilmiy stajirovka.", link: "https://deepmind.com/careers" },
+        { title: "NASA JPL Intern", cat: "eng cs", desc: "Kosmik kemalar uchun dasturiy ta'minot va avtonom tizimlar.", link: "https://www.jpl.nasa.gov/intern" },
+        // Muhandislik
+        { title: "Tesla Autopilot", cat: "eng intern", desc: "Avtopilot va kompyuterli ko‘rish tizimlari bo‘yicha amaliyot.", link: "https://www.tesla.com/internships" },
+        { title: "SpaceX Structural", cat: "eng intern", desc: "Raketa va Starship konstruksiyalarini loyihalash.", link: "https://www.spacex.com/careers" },
+        { title: "Bosch Engineering", cat: "eng intern", desc: "Avtomobil sensorlari va IoT bo‘yicha Germaniyada stajirovka.", link: "https://www.bosch.com/careers/" },
+        { title: "Siemens Energy", cat: "eng intern", desc: "Qayta tiklanuvchi energetika tizimlarini modellashtirish.", link: "https://www.siemens.com/global/en/company/jobs.html" },
+        // Iqtisodiyot va moliya
+        { title: "Goldman Sachs Summer", cat: "econ intern", desc: "Investment Banking va Trading bo‘yicha Nyu-York/London amaliyoti.", link: "https://www.goldmansachs.com/careers/" },
+        { title: "McKinsey Business Analyst", cat: "econ intern", desc: "Strategik maslahat va analitika loyihalari.", link: "https://www.mckinsey.com/careers" },
+        { title: "World Bank Intern", cat: "econ intern", desc: "Rivojlanish iqtisodiyoti va siyosat tahlili (Washington DC).", link: "https://www.worldbank.org/en/about/careers" },
+        { title: "IMF Fund Intern", cat: "econ intern", desc: "Makroiqtisodiy modellashtirish va valyuta siyosati.", link: "https://www.imf.org/en/About/Careers" },
+        // Volontyorlik
+        { title: "UN Online Volunteer", cat: "vol", desc: "Masofaviy tarzda BMT loyihalariga yordam – tarjima, dizayn, dasturlash.", link: "https://www.unv.org/" },
+        { title: "AIESEC Global Teacher", cat: "vol", desc: "Dunyoning 120+ mamlakatida bolalarga ta'lim berish dasturi.", link: "https://aiesec.org/" },
+        { title: "Red Cross Youth", cat: "vol", desc: "Favqulodda vaziyatlar va sog‘liqni saqlash loyihalari.", link: "https://www.redcross.org/volunteer" },
+        { title: "Habitat for Humanity", cat: "vol", desc: "Kam ta’minlangan oilalar uchun uy qurish dasturi.", link: "https://www.habitat.org/volunteer" },
+        { title: "Teach for All", cat: "vol", desc: "Global ta'lim tengsizligiga qarshi 2 yillik fellowship.", link: "https://teachforall.org/" },
+        // MUN
+        { title: "Harvard WorldMUN", cat: "mun", desc: "Dunyoning eng yirik xalqaro model konferensiyasi.", link: "https://www.worldmun.org/" },
+        { title: "Oxford GlobalMUN", cat: "mun", desc: "Oksfordda Xalqaro huquq va diplomatiya simulyatsiyasi.", link: "https://www.oxfordglobal.org/" },
+        { title: "IstanbulMUN", cat: "mun", desc: "Yevropa va Osiyo qo‘shilgan eng katta MUN", link: "https://www.istanbulmun.org/" },
+        { title: "Tashkent International MUN", cat: "mun local", desc: "O‘zbekistonda o‘tkaziladigan yirik MUN – TIMUN.", link: "https://timun.uz/" },
+        { title: "SamMUN", cat: "mun local", desc: "Samarqanddagi xalqaro model konferensiya.", link: "https://sammun.uz/" },
+        // Hackathon
+        { title: "NASA Space Apps", cat: "cs hackathon", desc: "Yer va kosmos muammolari uchun 48 soatlik global hackathon.", link: "https://www.spaceappschallenge.org/" },
+        { title: "Google Hash Code", cat: "cs hackathon", desc: "Algoritmik muammolarni yechish bo‘yicha jahon chempionati.", link: "https://codingcompetitions.withgoogle.com/hashcode" },
+        { title: "AngelHack", cat: "cs hackathon", desc: "Dunyoning 50+ shahrida startup prototiplar yaratish.", link: "https://angelhack.com/" },
+        { title: "Imagine Cup", cat: "cs hackathon", desc: "Microsoft tomonidan talabalar uchun texnologik innovatsiya musobaqasi.", link: "https://imaginecup.microsoft.com/" },
+        { title: "IT Park Uzbekistan Hackathon", cat: "local hackathon", desc: "O‘zbekistonda eng yirik dasturchilar tanlovi, $10,000 gacha sovrin.", link: "https://it-park.uz/uz/hackathon" },
+        { title: "Uzum Hackathon", cat: "local hackathon", desc: "Fintech va e-commerce yechimlari – Toshkentda o‘tkaziladi.", link: "https://uzum.com/hackathon" },
+        // Fellowship
+        { title: "Rhodes Scholarship", cat: "fellowship", desc: "Oksfordda magistratura uchun to‘liq ta’minot.", link: "https://www.rhodeshouse.ox.ac.uk/" },
+        { title: "Chevening Fellowship", cat: "fellowship", desc: "Buyuk Britaniyada 1 yillik magistratura – yetakchilik dasturi.", link: "https://www.chevening.org/" },
+        { title: "Fulbright Program", cat: "fellowship", desc: "AQSh universitetlarida o‘qish va tadqiqot uchun grant.", link: "https://fulbright.state.gov/" },
+        { title: "DAAD Leadership", cat: "fellowship", desc: "Germaniyada iqtisodiyot va texnologiya yo‘nalishlari.", link: "https://www.daad.de/en/" },
+        { title: "Erasus Mundus", cat: "fellowship", desc: "Yevropa Ittifoqining qo‘shma magistrlik dasturi.", link: "https://erasmus-plus.ec.europa.eu/" },
+        { title: "Obama Foundation Scholars", cat: "fellowship", desc: "Kolumbiya universitetida ijtimoiy ta'sir uchun intensiv dastur.", link: "https://www.obama.org/scholars/" },
+        // Grant va stipendiyalar
+        { title: "Google Lime Scholarship", cat: "grant", desc: "Kompyuter fanlari bo‘yicha nogiron talabalar uchun $10,000.", link: "https://buildyourfuture.withgoogle.com/scholarships" },
+        { title: "Microsoft Disability Scholarship", cat: "grant", desc: "$5,000 stipendiya + Microsoft konferensiyasi.", link: "https://aka.ms/disabilityscholarship" },
+        { title: "World Bank Joint Japan", cat: "grant", desc: "Rivojlanayotgan mamlakatlar talabalari uchun magistratura granti.", link: "https://www.worldbank.org/en/programs/scholarships" },
+        { title: "El-yurt umidi", cat: "local grant", desc: "O‘zbekistonliklarni xorijiy PhD va magistraturada o‘qitish davlat granti.", link: "https://el-yurtumi.uz/" },
+        { title: "Uchirish Grant (IT Park)", cat: "local grant", desc: "Startaplar uchun $5,000 – $50,000 gacha mablag‘.", link: "https://it-park.uz/uz/uchirish" },
+        // Mahalliy O‘zbekiston
+        { title: "EPAM Uzbekistan Intern", cat: "local intern", desc: "Dasturiy ta'minot va ma'lumotlar tahlili bo‘yicha pullik stajirovka.", link: "https://www.epam.com/careers" },
+        { title: "Beeline Academy", cat: "local intern", desc: "Telekom va IT sohasida 3 oylik intensiv o‘quv dasturi.", link: "https://beeline.uz/uz/company/vacancy" },
+        { title: "UCELL Digital Lab", cat: "local intern", desc: "Mobil ilovalar va raqamli marketing amaliyoti.", link: "https://www.ucell.uz/uz/jobs" },
+        { title: "Click IT School", cat: "local intern", desc: "To‘lov tizimlari va backend dasturlash bo‘yicha mentorlik dasturi.", link: "https://click.uz/careers" },
+        { title: "MyTaxi Tech Intern", cat: "local intern", desc: "Mobil dasturlash (iOS/Android) va Data Science loyihalari.", link: "https://mytaxi.uz/jobs" },
+        { title: "Uzum Data Intern", cat: "local intern", desc: "Katta ma'lumotlar va ML modellarni ishlab chiqish.", link: "https://uzum.com/careers" },
+        { title: "Humo Dev Camp", cat: "local intern", desc: "Karta tizimlari va xavfsizlik sohasida yozgi lager.", link: "https://humo.uz/uz/careers" },
+        // Qo'shimcha
+        { title: "Hult Prize", cat: "econ", desc: "Ijtimoiy tadbirkorlik bo‘yicha $1,000,000 grant.", link: "https://www.hultprize.org/" },
+        { title: "CERN Summer Student", cat: "eng cs", desc: "Yevropa nuklear tadqiqotlar markazida fizika va IT amaliyoti.", link: "https://careers.cern/students" },
+        { title: "IAEA Internship", cat: "eng", desc: "Yadro energetikasi va xavfsizlik bo‘yicha Vena, Avstriya.", link: "https://www.iaea.org/about/employment" },
+        { title: "OECD Intern", cat: "econ", desc: "Iqtisodiy hamkorlik va taraqqiyot tashkilotida siyosat tahlili.", link: "https://www.oecd.org/careers/internships/" },
+        { title: "ADB Intern", cat: "econ", desc: "Osiyo taraqqiyot bankida Manilada 8-12 haftalik amaliyot.", link: "https://www.adb.org/careers/internship" }
+    ];
+
+    // --------------------------- RENDER ---------------------------
+    function renderCards(filter = 'all') {
+        const grid = document.getElementById('opportunity-grid');
+        if (!grid) return;
+        grid.innerHTML = '';
+
+        let filtered = [];
+        if (filter === 'all') {
+            filtered = opportunities;
+        } else {
+            filtered = opportunities.filter(item => item.cat.includes(filter));
+        }
+
+        if (filtered.length === 0) {
+            grid.innerHTML = `<div style="text-align:center; grid-column:1/-1; padding:50px;">😔 Bu turkumda hech qanday imkoniyat topilmadi. Boshqa filtrni tanlang!</div>`;
+            return;
+        }
+
+        for (let item of filtered) {
+            let tagText = item.cat.toUpperCase();
+            if (tagText.includes('CS')) tagText = '💻 CS & IT';
+            else if (tagText.includes('ENG')) tagText = '⚙️ ENGINEERING';
+            else if (tagText.includes('ECON')) tagText = '📈 ECONOMICS';
+            else if (tagText.includes('INTERN')) tagText = '🎯 STAJIROVKA';
+            else if (tagText.includes('VOL')) tagText = '🤝 VOLONTYOR';
+            else if (tagText.includes('MUN')) tagText = '🌐 MUN';
+            else if (tagText.includes('HACKATHON')) tagText = '🚀 HACKATHON';
+            else if (tagText.includes('FELLOWSHIP')) tagText = '🏆 FELLOWSHIP';
+            else if (tagText.includes('GRANT')) tagText = '💰 GRANT';
+            else if (tagText.includes('LOCAL')) tagText = '🇺🇿 MAHALLIY';
+            else tagText = '✨ IMTIYOZ';
+
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <div>
+                    <span class="card-tag">${tagText}</span>
+                    <h3>${item.title}</h3>
+                    <p>${item.desc}</p>
+                </div>
+                <a href="${item.link}" target="_blank" class="explore-btn">Batafsil <i class="fas fa-arrow-right"></i></a>
+            `;
+            grid.appendChild(card);
+        }
+    }
+
+    // --------------------------- FILTER ---------------------------
+    function filterBy(type) {
+        const btns = document.querySelectorAll('.filter-btn');
+        btns.forEach(btn => btn.classList.remove('active'));
+        if (event && event.currentTarget) {
+            event.currentTarget.classList.add('active');
+        }
+        renderCards(type);
+    }
+
+    // --------------------------- DAY/NIGHT MODE ---------------------------
+    function initTheme() {
+        const savedTheme = localStorage.getItem('orzu-theme');
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const isDark = savedTheme === 'dark' || (savedTheme === null && prefersDark);
+        if (isDark) {
+            document.body.classList.add('dark');
+            updateThemeButtonText('dark');
+        } else {
+            document.body.classList.remove('dark');
+            updateThemeButtonText('light');
+        }
+    }
+
+    function updateThemeButtonText(theme) {
+        const themeLabel = document.getElementById('themeLabel');
+        const icon = document.querySelector('#themeToggleBtn i');
+        if (theme === 'dark') {
+            themeLabel.innerText = 'Tun';
+            icon.className = 'fas fa-sun';
+        } else {
+            themeLabel.innerText = 'Kun';
+            icon.className = 'fas fa-moon';
+        }
+    }
+
+    function toggleTheme() {
+        const isDark = document.body.classList.contains('dark');
+        if (isDark) {
+            document.body.classList.remove('dark');
+            localStorage.setItem('orzu-theme', 'light');
+            updateThemeButtonText('light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem('orzu-theme', 'dark');
+            updateThemeButtonText('dark');
+        }
+    }
+
+    // --------------------------- SOAT ---------------------------
+    function updateTime() {
+        const now = new Date();
+        document.getElementById('clock').innerText = now.toLocaleTimeString('uz-UZ', { hour12: false });
+    }
+
+    // --------------------------- BOSHLANG'ICH ---------------------------
+    setInterval(updateTime, 1000);
+    updateTime();
+    initTheme();
+    renderCards('all');
+
+    window.filterBy = filterBy;
+    document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme);
+</script>
+</body>
+</html>
